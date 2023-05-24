@@ -86,6 +86,13 @@ t_bool	is_valid(int ac, char **av)
 	return (1);
 }
 
+void	init_info(t_info *info, int ac, char **av)
+{
+	info->size = ac - 1;
+	info->size_a = ac - 1;
+	info->size_b = 0;
+}
+
 int	main(int ac, char **av)
 {
 	t_info	info;
@@ -94,5 +101,8 @@ int	main(int ac, char **av)
 		return (0);
 	if (!is_valid(ac, av))
 		return (ft_printf("Error\n"), 0);
+	if (ac == 2)
+		return (0);
+	init_info(t_info *info, int ac, char **av);
 	return (0);
 }
