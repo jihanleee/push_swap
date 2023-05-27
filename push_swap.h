@@ -15,13 +15,13 @@ typedef struct s_node
 
 typedef struct s_info
 {
-	int				size;
-	struct s_node	top_a;
-	struct s_node	bot_a;
-	int				size_a;
-	struct s_node	top_b;
-	struct s_node	bot_b;
-	int				size_b;
+	int		size;
+	t_node	*top_a;
+	t_node	*bot_a;
+	int		size_a;
+	t_node	*top_b;
+	t_node	*bot_b;
+	int		size_b;
 }				t_info;
 
 #endif

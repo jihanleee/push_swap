@@ -88,9 +88,12 @@ t_bool	is_valid(int ac, char **av)
 
 void	init_info(t_info *info, int ac, char **av)
 {
+	int	i;
+	t_node	*current;
 	info->size = ac - 1;
 	info->size_a = ac - 1;
 	info->size_b = 0;
+	info->top_a = (t_node *)malloc(sizeof (t_node));
 }
 
 int	main(int ac, char **av)
@@ -103,6 +106,6 @@ int	main(int ac, char **av)
 		return (ft_printf("Error\n"), 0);
 	if (ac == 2)
 		return (0);
-	init_info(t_info *info, int ac, char **av);
+	init_info(&info, ac, av);
 	return (0);
 }
