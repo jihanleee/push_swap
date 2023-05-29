@@ -16,6 +16,7 @@ typedef struct s_node
 typedef struct s_info
 {
 	int		size;
+	int		*nbrs;
 	t_node	*top_a;
 	t_node	*bot_a;
 	int		size_a;

@@ -86,14 +86,34 @@ t_bool	is_valid(int ac, char **av)
 	return (1);
 }
 
-void	init_info(t_info *info, int ac, char **av)
+void	convert_nbrs(int ac, char **av, char *nbrs)
 {
 	int	i;
+
+	i = 1;
+	while (i < ac)
+	{
+		nbrs[i - 1] = ft_atol(av[i]);
+		i++;
+	}
+	return ;
+}
+
+int	init_info(t_info *info, int ac, char **av)
+{
 	t_node	*current;
+
 	info->size = ac - 1;
 	info->size_a = ac - 1;
 	info->size_b = 0;
+	info->nbrs = (int *)malloc(sizeof (int) * (ac - 1));
+	if (info->nbrs)
+		return (-1);
+	convert_nbrs(ac, av, info->nbrs);
 	info->top_a = (t_node *)malloc(sizeof (t_node));
+	if (info->top_a)
+		return (free(info->nbrs), -1);
+	info->top_a->prev = 0;
 }
 
 int	main(int ac, char **av)
