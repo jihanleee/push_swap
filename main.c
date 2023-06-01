@@ -128,7 +128,7 @@ void	infoclear(t_info *info)
 	}
 }
 
-int	creat_list(t_info *info)
+int	create_list(t_info *info)
 {
 	t_node	*current;
 	int		i;
@@ -166,7 +166,43 @@ int	init_info(t_info *info, int ac, char **av)
 	if (info->nbrs == 0)
 		return (-1);
 	convert_nbrs(info, ac, av);
-	creat_list(info);
+	create_list(info);
+	ft_sort_int_tab(info->nbrs, info->size);
+}
+
+void printinfo(t_info *info)
+{
+	ft_printf("size total\t %d\n", info->size);
+	ft_printf("size a\t%d\n", info->size_a);
+	ft_printf("size b\t%d\n", info->size_b);
+}
+
+void printlists(t_info *info)
+{
+	t_node *current;
+
+	ft_printf("------------stack a ------------\n");
+	current = info->top_a;
+	while (1)
+	{
+		ft_printf("val %d,", current->value);
+		ft_printf("prev val %d,", current->prev->value);
+		ft_printf("next val %d\n", current->next->value);
+		if (current == info->bot_a)
+			break;
+		current = current->next;
+	}
+	ft_printf("------------stack b ------------\n");
+	current = info->top_b;
+	while (1)
+	{
+		ft_printf("val %d,", current->value);
+		ft_printf("prev val %d,", current->prev->value);
+		ft_printf("next val %d\n", current->next->value);
+		if (current == info->bot_b)
+			break;
+		current = current->next;
+	}
 }
 
 int	main(int ac, char **av)
@@ -181,17 +217,7 @@ int	main(int ac, char **av)
 		return (ft_printf("Error\n"), 0);
 	if (ac == 2)
 		return (0);
-	printf("%d", init_info(&info, ac, av));
- 	current = info.top_a;
-	while (1)
-	{
-		printf("val %d,", current->value);
-		printf("prev val %d,", current->prev->value);
-		printf("next val %d\n", current->next->value);
-		if (current == info.bot_a)
-			break;
-		current = current->next;
-	}
+	ft_printf("%d", init_info(&info, ac, av));
  	infoclear(&info);
 	return (0);
 }
