@@ -86,39 +86,94 @@ t_bool	is_valid(int ac, char **av)
 	return (1);
 }
 
-void	convert_nbrs(int ac, char **av, char *nbrs)
+void	convert_nbrs(t_info *info, int ac, char **av)
 {
 	int	i;
 
 	i = 1;
 	while (i < ac)
 	{
-		nbrs[i - 1] = ft_atol(av[i]);
+		info->nbrs[i - 1] = ft_atol(av[i]);
 		i++;
 	}
 	return ;
 }
 
+t_node	*ft_lstnew(int value)
+{
+	t_node	*new;
+
+	new = (t_node *)malloc(sizeof (t_node));
+	if (new == 0)
+		return (NULL);
+	new->next = 0;
+	new->prev = 0;
+	new->value = value;
+	return (new);
+}
+
+void	infoclear(t_info *info)
+{
+	t_node	*next;
+	t_node	*current;
+
+	free (info->nbrs);
+	current = info->top_a;
+	info->bot_a->next = 0;
+	while (current)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
+}
+
+int	creat_list(t_info *info)
+{
+	t_node	*current;
+	int		i;
+
+	info->top_a = ft_lstnew(info->nbrs[0]);
+	if (info->top_a == 0)
+		return (-1);
+	info->bot_a = info->top_a;
+	current = info->top_a;
+	i = 1;
+	while (i < info->size)
+	{
+ 		current->next = ft_lstnew(info->nbrs[i]);
+		if (current->next == 0)
+			return (infoclear(info), -1);
+		current->next->prev = current;
+		info->bot_a = current->next;
+		current = current->next;
+		info->top_a->prev = info->bot_a;
+		info->bot_a->next = info->top_a;
+		i++;
+	}
+	return (0);
+}
+
 int	init_info(t_info *info, int ac, char **av)
 {
 	t_node	*current;
+	int		i;
 
 	info->size = ac - 1;
 	info->size_a = ac - 1;
 	info->size_b = 0;
-	info->nbrs = (int *)malloc(sizeof (int) * (ac - 1));
-	if (info->nbrs)
+	info->nbrs = (long *)malloc(sizeof (long) * (ac - 1));
+	if (info->nbrs == 0)
 		return (-1);
-	convert_nbrs(ac, av, info->nbrs);
-	info->top_a = (t_node *)malloc(sizeof (t_node));
-	if (info->top_a)
-		return (free(info->nbrs), -1);
-	info->top_a->prev = 0;
+	convert_nbrs(info, ac, av);
+	creat_list(info);
 }
 
 int	main(int ac, char **av)
 {
 	t_info	info;
+	t_node	*current;
+	int		i;
 
 	if (ac == 1)
 		return (0);
@@ -126,6 +181,17 @@ int	main(int ac, char **av)
 		return (ft_printf("Error\n"), 0);
 	if (ac == 2)
 		return (0);
-	init_info(&info, ac, av);
+	printf("%d", init_info(&info, ac, av));
+ 	current = info.top_a;
+	while (1)
+	{
+		printf("val %d,", current->value);
+		printf("prev val %d,", current->prev->value);
+		printf("next val %d\n", current->next->value);
+		if (current == info.bot_a)
+			break;
+		current = current->next;
+	}
+ 	infoclear(&info);
 	return (0);
 }
