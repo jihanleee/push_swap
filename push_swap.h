@@ -9,6 +9,7 @@ typedef int	t_bool;
 typedef struct s_node
 {
 	int				value;
+	int				index;
 	struct s_node	*prev;
 	struct s_node	*next;
 }				t_node;
@@ -16,7 +17,7 @@ typedef struct s_node
 typedef struct s_info
 {
 	int		size;
-	long	*nbrs;
+	int		*nbrs;
 	t_node	*top_a;
 	t_node	*bot_a;
 	int		size_a;
