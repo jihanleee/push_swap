@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 19:06:56 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/05 19:33:57 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/07 00:13:57 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,7 +353,7 @@ void	rotate_b(t_info *info)
 {
 	if (info->size_b <= 1)
 		return ;
-	ft_printf("rb\b");
+	ft_printf("rb\n");
 	info->top_b = info->top_b->next;
 	info->bot_b = info->bot_b->next;
 }
@@ -362,21 +362,21 @@ void	reverse_rotate_b(t_info *info)
 {
 	if (info->size_b <= 1)
 		return ;
-	ft_printf("rrb\b");
+	ft_printf("rrb\n");
 	info->top_b = info->top_b->prev;
 	info->bot_b = info->bot_b->prev;
 }
 
 void	double_rotate(t_info *info)
 {
-	ft_printf("rr");
+	ft_printf("rr\n");
 	rotate_a(info);
 	rotate_b(info);
 }
 
 void	double_reverse_rotate(t_info *info)
 {
-	ft_printf("rrr");
+	ft_printf("rrr\n");
 	reverse_rotate_a(info);
 	reverse_rotate_b(info);
 }
@@ -412,18 +412,189 @@ void	valtoindex(t_info *info)
 	while (info->size_a)
 	{
 		current->index = ft_bsearch(info->nbrs, info->size, current->value);
-		ft_printf("index = %d\n", current->index);
 		if (current == info->bot_a)
 			break;
 		current = current->next;
 	}
 }
 
+void	tripartition(t_info *info)
+{
+	while (info->size_a > (info->size) / 3)
+	{
+		if (info->top_a->index < (info->size) / 3)
+		{
+			push_b(info);
+			rotate_b(info);
+		}
+		else if (info->top_a->index <= (info->size) * 2 / 3)
+			push_b(info);
+		else
+			rotate_a(info);
+	}
+	while (info->size_a > 1)
+		push_b(info);
+}
+
+int	sum_num_ops(t_info *info, int n_ra, int n_rb)
+{
+	int	sum;
+
+	sum = 0;
+	if (n_ra > (info->size_a - 1) / 2)
+		sum += (info->size - n_ra);
+	else
+		sum += n_ra;
+	if (n_rb > (info->size_a - 1) / 2)
+		sum += (info->size - n_rb);
+	else
+		sum += n_rb;
+	return (sum);
+}
+
+void	count_min_r(t_info *info, int *min_ra, int *min_rb)
+{
+	int		n_rb;
+	int		n_ra;
+	t_node	*current_a;
+	t_node	*current_b;
+
+	n_rb = 0;
+	current_b = info->top_b;
+	while (n_rb < info->size_b)
+	{
+		current_a = info->top_a;
+		n_ra = 0;
+		while (n_ra < info->size_a)
+		{
+			if ((current_a->index < current_b->index
+				&& current_a->prev->index > current_b->index)
+					&& sum_num_ops(info, n_ra, n_rb) < *min_ra + *min_rb)
+			{
+				*min_ra = n_ra;
+				*min_rb = n_rb;
+			}
+			current_a = current_a->next;
+			n_ra++;
+		}
+		current_b = current_b->next;
+		n_rb++;
+	}
+}
+
+void	do_minimum_rotation(t_info *info, int min_ra, int min_rb)
+{
+	int opp_ra;
+	int	opp_rb;
+
+	opp_ra = info->size_a - min_ra;
+	opp_rb = info->size_b - min_rb;
+		if (min_ra > (info->size_a - 1) / 2)
+		{
+			while (opp_ra--)
+				reverse_rotate_a(info);
+		}
+		else
+			while (min_ra--)
+				rotate_a(info);
+		if (min_rb > (info->size_b - 1) / 2)
+		{
+			while (opp_rb--)
+				reverse_rotate_b(info);
+		}
+		else
+			while (min_rb--)
+				rotate_b(info);
+}
+void	sort_many(t_info *info)
+{
+	int		min_ra;
+	int		min_rb;
+
+	tripartition(info);
+	push_a(info);
+	while (info->size_b)
+	{
+		min_ra = info->size;
+		min_rb = info->size;
+		count_min_r(info, &min_ra, &min_rb);
+		do_minimum_rotation(info, min_ra, min_rb);
+		push_a(info);
+	}
+}
+
+void	sort_3(t_info *info)
+{
+	int first;
+	int second;
+	int	third;
+
+	first = info->top_a->index;
+	second = info->top_a->next->index;
+	third = info->top_a->next->next->index;
+	if (first < second && second < third)
+		return ;
+	else if (first < third && third < second)
+	{
+		reverse_rotate_a(info);
+		swap_a(info);
+	}
+	else if (second < first && first < third)
+		swap_a(info);
+	else if (third < first && first < second)
+		reverse_rotate_a(info);
+	else if (second < third && third < first)
+		rotate_a(info);
+	else if (third < second && second < first)
+	{
+		swap_a(info);
+		reverse_rotate_a(info);
+	}
+}
+
+void	sort_5(t_info *info)
+{
+	while (info->top_a->index <= 1)
+		push_b(info);
+	while (info->size_a >= 4)
+	{
+		if (info->bot_a->index <= 1)
+			reverse_rotate_a(info);
+		while (info->top_a->index > 1)
+			rotate_a(info);
+		while (info->top_a->index <= 1)
+			push_b(info);
+	}
+	printlists(info);
+	sort_3(info);
+	if (info->top_b->index == 0)
+		swap_b(info);
+	while (info->size_b)
+		push_a(info);
+}
+
+t_bool	is_sorted_list(t_info *info)
+{
+	int		i;
+	t_node	*current;
+
+	if (info->size_a != info->size)
+		return (0);
+	current = info->top_a;
+	i = 0;
+	while (i < info->size)
+	{
+		if (current->index != i)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int main(int ac, char **av)
 {
 	t_info info;
 	t_node *current;
-	int i;
 
 	if (ac == 1)
 		return (0);
@@ -431,10 +602,9 @@ int main(int ac, char **av)
 		return (ft_printf("Error\n"), 0);
 	if (ac == 2)
 		return (0);
-	ft_printf("init_info return:\t%d\n", init_info(&info, ac, av));
-	printinfo(&info);
-	printlists(&info);
+	init_info(&info, ac, av);
 	valtoindex(&info);
+	sort_many(&info);
 	infoclear(&info);
 	return (0);
 }
