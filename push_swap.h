@@ -20,6 +20,12 @@ typedef struct s_info
 	int		*nbrs;
 	t_node	*top_a;
 	t_node	*bot_a;
+	int		min_ra;
+	int		reverse_a;
+	int		min_rb;
+	int		reverse_b;
+	int		max_a;
+	int		min_a;
 	int		size_a;
 	t_node	*top_b;
 	t_node	*bot_b;

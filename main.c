@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 19:06:56 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/07 00:13:57 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/12 02:38:48 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,8 @@ int	init_info(t_info *info, int ac, char **av)
 	info->size_b = 0;
 	info->top_b = 0;
 	info->bot_b = 0;
+	info->max_a = info->size - 1;
+	info->min_a = info->size - 1;
 	info->nbrs = (int *)malloc(sizeof(int) * (ac - 1));
 	if (info->nbrs == 0)
 		return (-1);
@@ -275,14 +277,13 @@ void push_b(t_info *info)
 	info->bot_b->next = info->top_b;
 }
 
-void swap_a(t_info *info)
+void	swap_a_silent(t_info *info)
 {
 	t_node *tmp_1st;
 	t_node *tmp_2nd;
 
 	if (info->size_a <= 1)
 		return;
-	ft_printf("sa\n");
 	if (info->size_a == 2)
 	{
 		info->top_a = info->top_a->next;
@@ -300,14 +301,13 @@ void swap_a(t_info *info)
 	info->top_a->prev = info->bot_a;
 }
 
-void	swap_b(t_info *info)
+void	swap_b_silent(t_info *info)
 {
     t_node *tmp_1st;
     t_node *tmp_2nd;
 
     if (info->size_b <= 1)
     	return ;
-	ft_printf("sb\n");
     if (info->size_b == 2)
     {
         info->top_b = info->top_b->next;
@@ -325,10 +325,23 @@ void	swap_b(t_info *info)
 	info->top_b->prev = info->bot_b;
 }
 
+void	swap_a(t_info *info)
+{
+	ft_printf("sa\n");
+	swap_a_silent(info);
+}
+
+void	swap_b(t_info *info)
+{
+	ft_printf("sb\n");
+	swap_b_silent(info);
+}
+
 void	double_swap(t_info *info)
 {
-	swap_a(info);
-	swap_b(info);
+	ft_printf("ss\n");
+	swap_a_silent(info);
+	swap_b_silent(info);
 }
 
 void	rotate_a(t_info *info)
@@ -369,16 +382,32 @@ void	reverse_rotate_b(t_info *info)
 
 void	double_rotate(t_info *info)
 {
+	if (info->size_a > 1)
+	{
+		info->top_a = info->top_a->next;
+		info->bot_a = info->bot_a->next;
+	}
+	if (info->size_b > 1)
+	{
+		info->top_b = info->top_b->next;
+		info->bot_b = info->bot_b->next;
+	}
 	ft_printf("rr\n");
-	rotate_a(info);
-	rotate_b(info);
 }
 
 void	double_reverse_rotate(t_info *info)
 {
+	if (info->size_a > 1)
+	{
+		info->top_a = info->top_a->prev;
+		info->bot_a = info->bot_a->prev;
+	}
+	if (info->size_b > 1)
+	{
+		info->top_b = info->top_b->prev;
+		info->bot_b = info->bot_b->prev;
+	}
 	ft_printf("rrr\n");
-	reverse_rotate_a(info);
-	reverse_rotate_b(info);
 }
 
 int	ft_bsearch(int *nbrs, int size, int value)
@@ -452,7 +481,27 @@ int	sum_num_ops(t_info *info, int n_ra, int n_rb)
 	return (sum);
 }
 
-void	count_min_r(t_info *info, int *min_ra, int *min_rb)
+void	get_min_r(t_info *info, int n_ra, int n_rb)
+{
+	int	abs_ra;
+	int	abs_rb;
+
+	abs_ra = n_ra;
+	abs_rb = n_rb;
+	if (n_ra > (info->size_a - 1) / 2)
+		abs_ra = info->size_a - n_ra;
+	if (n_rb > (info->size_b - 1) / 2)
+		abs_rb = info->size_b - n_rb;
+	if (abs_ra + abs_rb < info->min_ra + info->min_rb)
+	{
+		info->min_ra = abs_ra;
+		info->min_rb = abs_rb;
+		info->reverse_a = (n_ra > (info->size_a - 1) / 2);
+		info->reverse_b = (n_rb > (info->size_b - 1) / 2);
+	}
+}
+
+void	count_min_r(t_info *info)
 {
 	int		n_rb;
 	int		n_ra;
@@ -467,13 +516,9 @@ void	count_min_r(t_info *info, int *min_ra, int *min_rb)
 		n_ra = 0;
 		while (n_ra < info->size_a)
 		{
-			if ((current_a->index < current_b->index
-				&& current_a->prev->index > current_b->index)
-					&& sum_num_ops(info, n_ra, n_rb) < *min_ra + *min_rb)
-			{
-				*min_ra = n_ra;
-				*min_rb = n_rb;
-			}
+			if (((current_a->index == info->min_a && (current_b->index < info->min_a || current_b->index > info->max_a))
+				|| ((current_a->index > current_b->index && current_a->prev->index < current_b->index))))
+				get_min_r(info, n_ra, n_rb);
 			current_a = current_a->next;
 			n_ra++;
 		}
@@ -482,45 +527,86 @@ void	count_min_r(t_info *info, int *min_ra, int *min_rb)
 	}
 }
 
-void	do_minimum_rotation(t_info *info, int min_ra, int min_rb)
+void	do_double_rotation(t_info *info)
 {
-	int opp_ra;
-	int	opp_rb;
-
-	opp_ra = info->size_a - min_ra;
-	opp_rb = info->size_b - min_rb;
-		if (min_ra > (info->size_a - 1) / 2)
+	if(info->reverse_a && info->reverse_b)
+	{
+		while (info->min_ra && info->min_rb)
 		{
-			while (opp_ra--)
-				reverse_rotate_a(info);
+			double_reverse_rotate(info);
+			(info->min_ra)--;
+			(info->min_rb)--;
 		}
-		else
-			while (min_ra--)
-				rotate_a(info);
-		if (min_rb > (info->size_b - 1) / 2)
+	}
+	else if (!info->reverse_a && !info->reverse_b)
+	{
+		while (info->min_ra && info->min_rb)
 		{
-			while (opp_rb--)
-				reverse_rotate_b(info);
+			double_rotate(info);
+			(info->min_ra)--;
+			(info->min_rb)--;
 		}
-		else
-			while (min_rb--)
-				rotate_b(info);
+	}
 }
+
+void	do_rotation(t_info *info)
+{
+	while (info->reverse_a && info->min_ra)
+	{
+		reverse_rotate_a(info);
+		(info->min_ra)--;
+	}
+	while (!(info->reverse_a) && info->min_ra)
+	{
+		rotate_a(info);
+		(info->min_ra)--;
+	}
+	while (info->reverse_b && info->min_rb)
+	{
+		reverse_rotate_b(info);
+		(info->min_rb)--;
+	}
+	while (!(info->reverse_b) && info->min_rb)
+	{
+		rotate_b(info);
+		(info->min_rb)--;
+	}
+}
+
+void	final_rotation(t_info *info)
+{
+	if (info->top_a->index > (info->size_a - 1) / 2)
+		while (info->top_a->index)
+			reverse_rotate_a(info);
+	else
+		while (info->top_a->index)
+			rotate_a(info);
+}
+
 void	sort_many(t_info *info)
 {
-	int		min_ra;
-	int		min_rb;
-
 	tripartition(info);
-	push_a(info);
+	info->max_a = info->top_a->index;
+	info->min_a = info->top_a->index;
 	while (info->size_b)
 	{
-		min_ra = info->size;
-		min_rb = info->size;
-		count_min_r(info, &min_ra, &min_rb);
-		do_minimum_rotation(info, min_ra, min_rb);
+		info->min_ra = info->size;
+		info->min_rb = info->size;
+		count_min_r(info);
+ 		do_double_rotation(info);
+		do_rotation(info);
 		push_a(info);
+		if (info->top_a->index > info->max_a)
+			info->max_a = info->top_a->index;
+		if (info->top_a->index < info->min_a)
+			info->min_a = info->top_a->index;
 	}
+	if (info->top_a->index < (info->size_a - 1) / 2)
+		while (info->top_a->index)
+			reverse_rotate_a(info);
+	else
+		while (info->top_a->index)
+			rotate_a(info);
 }
 
 void	sort_3(t_info *info)
