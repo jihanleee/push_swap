@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/13 16:23:54 by jihalee           #+#    #+#             */
+/*   Updated: 2023/06/13 16:23:58 by jihalee          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 # include <unistd.h>
@@ -79,6 +91,7 @@ void	do_rotation(t_info *info);
 void	final_rotation(t_info *info);
 void	sort_many(t_info *info);
 void	sort_3(t_info *info);
+void	sort_4(t_info *info);
 void	sort_5(t_info *info);
 
 /*debug*/

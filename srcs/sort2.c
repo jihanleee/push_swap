@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:22:19 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/12 19:18:39 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/13 16:23:34 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,24 @@ void	sort_3(t_info *info)
 	}
 }
 
+void	sort_4(t_info *info)
+{
+	while (info->size_a > 3)
+	{
+		if (info->bot_a->index == 1)
+			reverse_rotate_a(info);
+		while (info->top_a->index != 0)
+			rotate_a(info);
+		while (info->top_a->index == 0)
+			push_b(info);
+	}
+	sort_3(info);
+	while (info->size_b)
+		push_a(info);
+}
+
 void	sort_5(t_info *info)
 {
-	while (info->top_a->index <= 1)
-		push_b(info);
 	while (info->size_a >= 4)
 	{
 		if (info->bot_a->index <= 1)

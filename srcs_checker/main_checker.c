@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 23:24:12 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/13 01:44:41 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/13 16:21:57 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	do_inst(t_info *info, char *line)
 		reverse_rotate_b(info);
 	else if (!ft_strcmp(line, "rrr\n"))
 		double_reverse_rotate(info);
-	else if (!ft_strcmp(line, "rr"))
+	else if (!ft_strcmp(line, "rr\n"))
 		double_rotate(info);
 	else
 		return (ft_putstr_fd("Error\n", 2), -1);
@@ -63,7 +63,7 @@ int	take_inst(t_info *info)
 	{
 		line = get_next_line(0);
 		if (line == 0)
-			break;
+			break ;
 		if (do_inst(info, line) == -1)
 			return (free(line), -1);
 		free(line);
@@ -79,8 +79,6 @@ int	main(int ac, char **av)
 		return (0);
 	if (!is_valid(av))
 		return (ft_putstr_fd("Error\n", 2), 0);
-	if (ac == 2)
-		return (0);
 	if (init_info(&info, ac, av) == -1)
 		return (0);
 	valtoindex(&info);

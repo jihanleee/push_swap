@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 18:06:47 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/13 02:02:38 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/13 16:21:09 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,16 +55,15 @@ void	infoclear(t_info *info)
 			current = next;
 		}
 	}
-	if (info->size_b != 0)
+	if (info->size_b == 0)
+		return ;
+	info->bot_b->next = 0;
+	current = info->top_b;
+	while (current)
 	{
-		info->bot_b->next = 0;
-		current = info->top_b;
-		while (current)
-		{
-			next = current->next;
-			free(current);
-			current = next;
-		}
+		next = current->next;
+		free(current);
+		current = next;
 	}
 }
 

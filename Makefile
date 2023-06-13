@@ -8,15 +8,9 @@ SRC_CHECKER_DIR = ./srcs_checker/
 INCLUDE = ./includes
 
 SRCS = double_rotate.c  ft_printf.c  list1.c  list2.c  print_formats.c\
-push.c  rotate.c  sort1.c  sort2.c  swap.c  utils.c
+push.c  rotate.c  sort1.c  sort2.c  swap.c  utils.c main.c
 SRCS_CHECKER = double_rotate.c  ft_printf.c  list1.c  list2.c  print_formats.c\
-push.c  rotate.c  sort1.c  sort2.c  swap.c  utils.c get_next_line.c get_next_line_utils.c
-
-MAIN = main.c
-MAIN_O = main.o
-
-MAIN_CHECKER = main_checker.c
-MAIN_CHECKER_O = main_checker.o
+push.c  rotate.c  swap.c  utils.c get_next_line.c get_next_line_utils.c main_checker.c
 
 SRC_FILES = $(addprefix $(SRC_DIR), $(SRCS))
 SRC_CHECKER_FILES = $(addprefix $(SRC_CHECKER_DIR), $(SRCS_CHECKER))
@@ -34,11 +28,11 @@ bonus : $(NAME_BONUS)
 .c.o :
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(NAME) : $(OBJ_FILES) $(MAIN_O)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES) $(MAIN_O)
+$(NAME) : $(OBJ_FILES)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ_FILES)
 
-$(NAME_BONUS) : $(OBJ_CHECKER_FILES) $(MAIN_CHECKER_O)
-	$(CC) $(CFLAGS) -o $(NAME_BONUS) $(OBJ_CHECKER_FILES) $(MAIN_CHECKER_O)
+$(NAME_BONUS) : $(OBJ_CHECKER_FILES)
+	$(CC) $(CFLAGS) -o $(NAME_BONUS) $(OBJ_CHECKER_FILES)
 
 clean :
 	rm -f *.o */*.o

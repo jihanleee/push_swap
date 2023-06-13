@@ -6,7 +6,7 @@
 /*   By: jihalee <jihalee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 19:06:56 by jihalee           #+#    #+#             */
-/*   Updated: 2023/06/13 02:28:45 by jihalee          ###   ########.fr       */
+/*   Updated: 2023/06/13 14:26:11 by jihalee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ int	main(int ac, char **av)
 		swap_a(&info);
 	else if (ac == 4)
 		sort_3(&info);
-	else if (ac <= 6)
+	else if (ac == 5)
+		sort_4(&info);
+	else if (ac == 6)
 		sort_5(&info);
 	else
 		sort_many(&info);
